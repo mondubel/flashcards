@@ -1,0 +1,16 @@
+---
+globs: *.rb
+alwaysApply: false
+---
+
+## Backend
+
+### General Guidelines
+
+- Follow Rails conventions over configuration
+- Models contain business rules and domain logic, keep models small and focused
+- Use Active Record validations and callbacks sparingly, prefer plain Ruby methods over callbacks
+- Controllers should be thin, only used to fetch data, authorize access, decide the response
+- Use service objects for complex workflows
+- Enforce authorization at the controller level, use policy objects
+- Test business logic at the model and service level, keep controller tests focused on HTTP behavior, authorization, response format
