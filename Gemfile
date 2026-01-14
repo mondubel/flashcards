@@ -27,6 +27,9 @@ group :development, :test do
   gem "bundler-audit", require: false
   gem "brakeman", require: false
   gem "rubocop-rails-omakase", require: false
+  gem "pry-rails"
+  gem "factory_bot_rails"
+  gem "faker"
 end
 
 group :development do

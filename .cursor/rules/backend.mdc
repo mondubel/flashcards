@@ -14,3 +14,4 @@ alwaysApply: false
 - Use service objects for complex workflows
 - Enforce authorization at the controller level, use policy objects
 - Test business logic at the model and service level, keep controller tests focused on HTTP behavior, authorization, response format
+- Do not use `let`, `before` or `subject` in rspec. Its bad practice.
