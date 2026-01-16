@@ -171,13 +171,13 @@ jobs:
           UNIT_COVERAGE="N/A"
           E2E_COVERAGE="N/A"
           
-          # SimpleCov-json generates coverage.json
+          # Parse coverage from metrics section (not individual files)
           if [ -f "coverage-unit/coverage.json" ]; then
-            UNIT_COVERAGE=$(grep -o '"covered_percent":[0-9.]*' coverage-unit/coverage.json | head -1 | cut -d':' -f2 || echo "N/A")
+            UNIT_COVERAGE=$(grep -o '"metrics":{[^}]*"covered_percent":[0-9.]*' coverage-unit/coverage.json | grep -o '"covered_percent":[0-9.]*' | cut -d':' -f2 || echo "N/A")
           fi
           
           if [ -f "coverage-e2e/coverage.json" ]; then
-            E2E_COVERAGE=$(grep -o '"covered_percent":[0-9.]*' coverage-e2e/coverage.json | head -1 | cut -d':' -f2 || echo "N/A")
+            E2E_COVERAGE=$(grep -o '"metrics":{[^}]*"covered_percent":[0-9.]*' coverage-e2e/coverage.json | grep -o '"covered_percent":[0-9.]*' | cut -d':' -f2 || echo "N/A")
           fi
           
           echo "unit=$UNIT_COVERAGE" >> $GITHUB_OUTPUT
