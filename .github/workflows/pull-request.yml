@@ -84,7 +84,7 @@ jobs:
           bundle exec rspec --exclude-pattern "spec/system/**/*_spec.rb" --format documentation
 
       - name: Upload unit test coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: unit-coverage
           path: coverage/
@@ -127,14 +127,14 @@ jobs:
           bundle exec rspec spec/system --format documentation
 
       - name: Upload E2E test coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: e2e-coverage
           path: coverage/
           retention-days: 7
 
       - name: Keep screenshots from failed system tests
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: screenshots
