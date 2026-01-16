@@ -144,8 +144,11 @@ jobs:
   status-comment:
     name: Komentarz ze statusem
     runs-on: ubuntu-latest
-    needs: [unit-test, e2e-test]
+    needs: [lint, unit-test, e2e-test]
     if: always() && github.event_name == 'pull_request'
+    permissions:
+      pull-requests: write
+      contents: read
     
     steps:
       - name: Download unit coverage
@@ -168,12 +171,13 @@ jobs:
           UNIT_COVERAGE="N/A"
           E2E_COVERAGE="N/A"
           
-          if [ -f "coverage-unit/.last_run.json" ]; then
-            UNIT_COVERAGE=$(cat coverage-unit/.last_run.json | grep -o '"coverage":[0-9.]*' | cut -d':' -f2 || echo "N/A")
+          # Parse coverage from metrics section (not individual files)
+          if [ -f "coverage-unit/coverage.json" ]; then
+            UNIT_COVERAGE=$(grep -o '"metrics":{[^}]*"covered_percent":[0-9.]*' coverage-unit/coverage.json | grep -o '"covered_percent":[0-9.]*' | cut -d':' -f2 || echo "N/A")
           fi
           
-          if [ -f "coverage-e2e/.last_run.json" ]; then
-            E2E_COVERAGE=$(cat coverage-e2e/.last_run.json | grep -o '"coverage":[0-9.]*' | cut -d':' -f2 || echo "N/A")
+          if [ -f "coverage-e2e/coverage.json" ]; then
+            E2E_COVERAGE=$(grep -o '"metrics":{[^}]*"covered_percent":[0-9.]*' coverage-e2e/coverage.json | grep -o '"covered_percent":[0-9.]*' | cut -d':' -f2 || echo "N/A")
           fi
           
           echo "unit=$UNIT_COVERAGE" >> $GITHUB_OUTPUT
