@@ -1,0 +1,61 @@
+---
+EnableDefaultLinters: true
+linters:
+  RuboCop:
+    enabled: true
+    rubocop_config:
+      inherit_from:
+        - .rubocop.yml
+      Layout/InitialIndentation:
+        Enabled: false
+      Layout/TrailingWhitespace:
+        Enabled: false
+      Layout/IndentationWidth:
+        Enabled: false
+  
+  # Wymuszaj poprawne wcięcia w plikach ERB
+  Indentation:
+    enabled: true
+  
+  # Sprawdź czy wszystkie otwarte tagi HTML są zamknięte
+  ClosingErbTagIndent:
+    enabled: true
+  
+  # Wymuszaj spójne formatowanie tagów ERB
+  ErbSafetyTag:
+    enabled: true
+  
+  # Sprawdź czy nie ma niepotrzebnych spacji w tagach ERB
+  NoJavascriptTagHelper:
+    enabled: true
+  
+  # Sprawdź duplikaty atrybutów HTML
+  ParserErrors:
+    enabled: true
+  
+  # Wymuszaj samozamykające się tagi HTML
+  SelfClosingTag:
+    enabled: true
+  
+  # Sprawdź czy komentarze ERB nie zawierają problematycznego kodu
+  CommentSyntax:
+    enabled: true
+  
+  # Sprawdź zgodność z Rails Helper
+  DeprecatedClasses:
+    enabled: true
+    addendum: 'Consider using modern CSS classes instead of deprecated ones'
+  
+  # Sprawdź finalne nowe linie
+  TrailingWhitespace:
+    enabled: true
+  
+  # Sprawdź pustą przestrzeń na końcu pliku
+  FinalNewline:
+    enabled: true
+    present: true
+
+exclude:
+  - '**/node_modules/**'
+  - '**/vendor/**'
+  - '**/tmp/**'

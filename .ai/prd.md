@@ -50,11 +50,6 @@ Flashcards rozwiązuje ten problem poprzez szybkie generowanie fiszek przez AI o
 - Możliwość edycji fiszki (manualnej i AI-generated).
 - Możliwość usunięcia fiszki w dowolnym momencie.
 
-3.5 Powtórki
-- Integracja fiszek z gotowym algorytmem Anki po zapisaniu fiszki.
-- Prosty widok: „Do powtórki dziś”.
-- Usunięcie fiszki usuwa ją również z cyklu powtórek.
-
 ## 4. Granice produktu
 
 Poza zakresem MVP:
@@ -75,7 +70,7 @@ Kryteria akceptacji:
 - Formularz wymaga emaila i hasła.
 - Email musi mieć poprawny format.
 - Hasło jest wymagane.
-- Po poprawnej rejestracji użytkownik może się zalogować.
+- Po poprawnej rejestracji użytkownik zostaje automatycznie zalogowany.
 
 US-002
 Tytuł: Logowanie użytkownika
@@ -131,13 +126,6 @@ Kryteria akceptacji:
 - Fiszka znika z cyklu powtórek.
 
 US-009
-Tytuł: Przegląd fiszek do powtórki
-Opis: Jako użytkownik chcę zobaczyć fiszki do powtórki na dziś.
-Kryteria akceptacji:
-- Widok pokazuje tylko fiszki zaplanowane na dziś.
-- Brak fiszek skutkuje pustym stanem.
-
-US-010
 Tytuł: Wylogowanie
 Opis: Jako użytkownik chcę się wylogować, aby zakończyć sesję.
 Kryteria akceptacji:

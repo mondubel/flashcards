@@ -149,7 +149,7 @@ RSpec.describe Flashcard, type: :model do
       manual_card = create(:flashcard, :manual, user: user)
       ai_full_card = create(:flashcard, :ai_full, user: user)
       ai_edited_card = create(:flashcard, :ai_edited, user: user)
-      
+
       expect(manual_card.manual?).to be true
       expect(manual_card.ai_full?).to be false
       expect(ai_full_card.ai_full?).to be true

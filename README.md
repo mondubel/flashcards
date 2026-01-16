@@ -89,9 +89,17 @@ bin/rails test         # Run test suite
 Linting and security tools (development/test):
 
 ```
-bundle exec rubocop
-bundle exec brakeman
-bundle exec bundler-audit
+bin/rubocop                          # Lint Ruby code
+bundle exec erb_lint --lint-all      # Lint ERB templates
+bundle exec brakeman                 # Security vulnerability scanner
+bundle exec bundler-audit            # Check for vulnerable dependencies
+```
+
+Auto-fix linting issues:
+
+```
+bin/rubocop -a                                 # Auto-fix Ruby code issues
+bundle exec erb_lint --lint-all --autocorrect  # Auto-fix ERB template issues
 ```
 
 ## Project Scope

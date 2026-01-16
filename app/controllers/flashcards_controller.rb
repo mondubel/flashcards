@@ -16,10 +16,11 @@ class FlashcardsController < ApplicationController
     def create
         @flashcard = current_user.flashcards.build(flashcard_params)
         @flashcard.source = :manual
-        
+
         if @flashcard.save
             redirect_to flashcards_path, notice: "Flashcard created successfully."
         else
+            flash.now[:alert] = "Failed to create flashcard. Please check the errors below."
             render :new, status: :unprocessable_entity
         end
     end
@@ -30,10 +31,11 @@ class FlashcardsController < ApplicationController
 
     def update
         @flashcard = current_user.flashcards.find(params[:id])
-        
+
         if @flashcard.update(flashcard_params)
             redirect_to flashcards_path, notice: "Flashcard updated successfully."
         else
+            flash.now[:alert] = "Failed to update flashcard. Please check the errors below."
             render :edit, status: :unprocessable_entity
         end
     end
@@ -45,7 +47,7 @@ class FlashcardsController < ApplicationController
     end
 
     private
-    
+
     def flashcard_params
         params.require(:flashcard).permit(:front, :back)
     end

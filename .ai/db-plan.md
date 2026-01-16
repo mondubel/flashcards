@@ -80,6 +80,7 @@ Przechowuje fiszki użytkowników (manualne i wygenerowane przez AI).
 | `users` | `index_users_on_reset_password_token` | `reset_password_token` | UNIQUE | Wyszukiwanie tokenu resetowania hasła |
 | `generations` | `index_generations_on_user_id` | `user_id` | B-tree | Pobieranie historii generacji użytkownika |
 | `flashcards` | `index_flashcards_on_user_id` | `user_id` | B-tree | Pobieranie wszystkich fiszek użytkownika |
+| `flashcards` | `index_flashcards_on_generation_id` | `generation_id` | B-tree | Pobieranie fiszek z danej generacji; wydajność CASCADE przy usuwaniu |
 
 
 ## 4. Zasady PostgreSQL (RLS)

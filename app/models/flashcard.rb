@@ -6,5 +6,5 @@ class Flashcard < ApplicationRecord
   validates :back, presence: true, length: { maximum: 500 }
   validates :source, presence: true
 
-  enum :source, { manual: 'manual', ai_full: 'ai_full', ai_edited: 'ai_edited' }
+  enum :source, { manual: "manual", ai_full: "ai_full", ai_edited: "ai_edited" }
 end

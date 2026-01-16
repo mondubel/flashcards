@@ -14,7 +14,14 @@ class GenerationsController < ApplicationController
     end
 
     def create
-        @generation = current_user.generations.create(generation_params)
+        @generation = current_user.generations.build(generation_params)
+
+        if @generation.save
+            redirect_to generation_path(@generation), notice: "Generation created successfully."
+        else
+            flash.now[:alert] = "Failed to create generation. Please check the errors below."
+            render :new, status: :unprocessable_entity
+        end
     end
 
     private

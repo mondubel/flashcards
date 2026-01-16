@@ -23,39 +23,39 @@
               <%= link_to root_path, class: "text-2xl font-bold text-gray-900 hover:text-indigo-600 transition" do %>
                 Flashcards
               <% end %>
-              
+
               <!-- Main Navigation -->
               <div class="hidden md:flex items-center space-x-1">
-                <%= link_to "My Cards", flashcards_path, 
+                <%= link_to "My Cards", flashcards_path,
                     class: "px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition" %>
-                <%= link_to "History", generations_path, 
+                <%= link_to "History", generations_path,
                     class: "px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition" %>
               </div>
             </div>
 
             <!-- Action Buttons -->
             <div class="flex items-center space-x-3">
-              <%= link_to new_flashcard_path, 
+              <%= link_to new_flashcard_path,
                   class: "hidden sm:inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition shadow-sm" do %>
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
                 Add Card
               <% end %>
-              
-              <%= link_to new_generation_path, 
+
+              <%= link_to new_generation_path,
                   class: "inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors duration-200 shadow-sm" do %>
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
                 Generate with AI
               <% end %>
-              
-              <%= button_to destroy_user_session_path, method: :delete, 
+
+              <%= button_to destroy_user_session_path, method: :delete,
                   class: "px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition cursor-pointer",
                   form: { class: "inline" } do %>
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                 </svg>
               <% end %>
             </div>
@@ -63,7 +63,9 @@
         </div>
       </nav>
     <% end %>
-    
+
+    <%= render "shared/flash_messages" %>
+
     <main class="<%= user_signed_in? ? 'py-8' : '' %>">
       <%= yield %>
     </main>

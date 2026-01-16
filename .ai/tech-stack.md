@@ -21,6 +21,12 @@ AI – Komunikacja z modelami przez usługę Openrouter.ai:
 - Komunikacja z AI realizowana po stronie backendu
 - Możliwość konfiguracji limitów i kluczy API
 
+Testowanie:
+- RSpec Rails jako framework testowy
+- FactoryBot Rails do tworzenia danych testowych
+- Faker do generowania realistycznych danych
+- Capybara + Selenium WebDriver do testów systemowych (E2E)
+
 CI/CD i Hosting:
 - GitHub Actions do tworzenia pipeline’ów CI/CD
 - AWS do hostowania aplikacji

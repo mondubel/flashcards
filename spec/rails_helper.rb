@@ -1,4 +1,19 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
+if ENV['COVERAGE']
+  require 'simplecov'
+  SimpleCov.start 'rails' do
+    add_filter '/spec/'
+    add_filter '/config/'
+    add_filter '/vendor/'
+
+    add_group 'Controllers', 'app/controllers'
+    add_group 'Models', 'app/models'
+    add_group 'Helpers', 'app/helpers'
+    add_group 'Jobs', 'app/jobs'
+    add_group 'Mailers', 'app/mailers'
+  end
+end
+
 require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/environment'
@@ -20,7 +35,7 @@ require 'rspec/rails'
 # directory. Alternatively, in the individual `*_spec.rb` files, manually
 # require only the support files necessary.
 #
-# Rails.root.glob('spec/support/**/*.rb').sort.each { |f| require f }
+Rails.root.glob('spec/support/**/*.rb').sort.each { |f| require f }
 
 # Checks for pending migrations and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove these lines.
@@ -69,4 +84,13 @@ RSpec.configure do |config|
 
   # Configure Devise test helpers
   config.include Devise::Test::IntegrationHelpers, type: :request
+
+  # Configure Capybara for system tests
+  config.before(:each, type: :system) do |example|
+    if example.metadata[:js]
+      driven_by :selenium_chrome_headless
+    else
+      driven_by :rack_test
+    end
+  end
 end
