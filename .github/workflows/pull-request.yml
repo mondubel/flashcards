@@ -168,22 +168,16 @@ jobs:
       - name: Parse coverage results
         id: coverage
         run: |
-          # Debug: List files in coverage directories
-          echo "Files in coverage-unit:"
-          ls -la coverage-unit/ || echo "Directory not found"
-          echo "Files in coverage-e2e:"
-          ls -la coverage-e2e/ || echo "Directory not found"
-          
           UNIT_COVERAGE="N/A"
           E2E_COVERAGE="N/A"
           
-          # SimpleCov generates .resultset.json, not .last_run.json
-          if [ -f "coverage-unit/.resultset.json" ]; then
-            UNIT_COVERAGE=$(cat coverage-unit/.resultset.json | grep -o '"covered_percent":[0-9.]*' | head -1 | cut -d':' -f2 || echo "N/A")
+          # SimpleCov-json generates coverage.json
+          if [ -f "coverage-unit/coverage.json" ]; then
+            UNIT_COVERAGE=$(grep -o '"covered_percent":[0-9.]*' coverage-unit/coverage.json | head -1 | cut -d':' -f2 || echo "N/A")
           fi
           
-          if [ -f "coverage-e2e/.resultset.json" ]; then
-            E2E_COVERAGE=$(cat coverage-e2e/.resultset.json | grep -o '"covered_percent":[0-9.]*' | head -1 | cut -d':' -f2 || echo "N/A")
+          if [ -f "coverage-e2e/coverage.json" ]; then
+            E2E_COVERAGE=$(grep -o '"covered_percent":[0-9.]*' coverage-e2e/coverage.json | head -1 | cut -d':' -f2 || echo "N/A")
           fi
           
           echo "unit=$UNIT_COVERAGE" >> $GITHUB_OUTPUT

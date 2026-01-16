@@ -1,7 +1,15 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 if ENV['COVERAGE']
   require 'simplecov'
+  require 'simplecov-json'
+  
   SimpleCov.start 'rails' do
+    # Use both HTML and JSON formatters
+    formatter SimpleCov::Formatter::MultiFormatter.new([
+      SimpleCov::Formatter::HTMLFormatter,
+      SimpleCov::Formatter::JSONFormatter
+    ])
+    
     add_filter '/spec/'
     add_filter '/config/'
     add_filter '/vendor/'
