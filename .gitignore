@@ -39,3 +39,12 @@
 
 # Ignore test coverage reports
 /coverage
+
+# Ignore chromedriver binaries (auto-downloaded by selenium-webdriver)
+/chromedriver
+
+# Ignore macOS system files
+.DS_Store
+
+# Ignore Kamal deployment configuration
+/.kamal
