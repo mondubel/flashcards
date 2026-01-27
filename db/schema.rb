@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_14_150244) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_27_163149) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -31,8 +31,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_14_150244) do
     t.integer "accepted_unedited_count"
     t.datetime "created_at", null: false
     t.integer "generated_count", default: 0, null: false
+    t.jsonb "generated_flashcards"
     t.integer "generation_duration"
     t.string "model"
+    t.boolean "reviewed", default: false, null: false
     t.text "source_text", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
