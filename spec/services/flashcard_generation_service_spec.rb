@@ -2,17 +2,14 @@ require 'rails_helper'
 
 RSpec.describe FlashcardGenerationService do
   describe '#generate' do
-    let(:service) { described_class.new }
-    let(:source_text) do
-      <<~TEXT
-        Ruby on Rails is a web application framework written in Ruby.
-        It follows the Model-View-Controller (MVC) architectural pattern.
-        Rails emphasizes convention over configuration and the DRY principle.
-      TEXT
-    end
-
     context 'when generation is successful' do
       it 'returns flashcards data with metadata' do
+        source_text = <<~TEXT
+          Ruby on Rails is a web application framework written in Ruby.
+          It follows the Model-View-Controller (MVC) architectural pattern.
+          Rails emphasizes convention over configuration and the DRY principle.
+        TEXT
+
         mock_response = {
           'flashcards' => [
             { 'question' => 'What is Ruby on Rails?', 'answer' => 'A web application framework' },
@@ -20,8 +17,12 @@ RSpec.describe FlashcardGenerationService do
           ]
         }
 
-        allow_any_instance_of(OpenRouterService).to receive(:complete).and_return(mock_response)
+        # Mock OpenRouterService initialization to avoid API key requirement
+        mock_openrouter = instance_double(OpenRouterService)
+        allow(OpenRouterService).to receive(:new).and_return(mock_openrouter)
+        allow(mock_openrouter).to receive(:complete).and_return(mock_response)
 
+        service = described_class.new
         result = service.generate(source_text)
 
         expect(result).to be_a(Hash)
@@ -44,14 +45,24 @@ RSpec.describe FlashcardGenerationService do
       end
 
       it 'strips whitespace from questions and answers' do
+        source_text = <<~TEXT
+          Ruby on Rails is a web application framework written in Ruby.
+          It follows the Model-View-Controller (MVC) architectural pattern.
+          Rails emphasizes convention over configuration and the DRY principle.
+        TEXT
+
         mock_response = {
           'flashcards' => [
             { 'question' => '  What is Rails?  ', 'answer' => '  A framework  ' }
           ]
         }
 
-        allow_any_instance_of(OpenRouterService).to receive(:complete).and_return(mock_response)
+        # Mock OpenRouterService initialization to avoid API key requirement
+        mock_openrouter = instance_double(OpenRouterService)
+        allow(OpenRouterService).to receive(:new).and_return(mock_openrouter)
+        allow(mock_openrouter).to receive(:complete).and_return(mock_response)
 
+        service = described_class.new
         result = service.generate(source_text)
 
         flashcards = result[:flashcards]
@@ -62,6 +73,8 @@ RSpec.describe FlashcardGenerationService do
 
     context 'when source text is blank' do
       it 'raises ArgumentError' do
+        service = described_class.new
+
         expect {
           service.generate('')
         }.to raise_error(ArgumentError, 'Source text cannot be blank')
@@ -70,9 +83,20 @@ RSpec.describe FlashcardGenerationService do
 
     context 'when response format is invalid' do
       it 'raises ResponseParseError when flashcards key is missing' do
+        source_text = <<~TEXT
+          Ruby on Rails is a web application framework written in Ruby.
+          It follows the Model-View-Controller (MVC) architectural pattern.
+          Rails emphasizes convention over configuration and the DRY principle.
+        TEXT
+
         mock_response = { 'data' => [] }
 
-        allow_any_instance_of(OpenRouterService).to receive(:complete).and_return(mock_response)
+        # Mock OpenRouterService initialization to avoid API key requirement
+        mock_openrouter = instance_double(OpenRouterService)
+        allow(OpenRouterService).to receive(:new).and_return(mock_openrouter)
+        allow(mock_openrouter).to receive(:complete).and_return(mock_response)
+
+        service = described_class.new
 
         expect {
           service.generate(source_text)
@@ -80,9 +104,20 @@ RSpec.describe FlashcardGenerationService do
       end
 
       it 'raises ResponseParseError when flashcards array is empty' do
+        source_text = <<~TEXT
+          Ruby on Rails is a web application framework written in Ruby.
+          It follows the Model-View-Controller (MVC) architectural pattern.
+          Rails emphasizes convention over configuration and the DRY principle.
+        TEXT
+
         mock_response = { 'flashcards' => [] }
 
-        allow_any_instance_of(OpenRouterService).to receive(:complete).and_return(mock_response)
+        # Mock OpenRouterService initialization to avoid API key requirement
+        mock_openrouter = instance_double(OpenRouterService)
+        allow(OpenRouterService).to receive(:new).and_return(mock_openrouter)
+        allow(mock_openrouter).to receive(:complete).and_return(mock_response)
+
+        service = described_class.new
 
         expect {
           service.generate(source_text)
@@ -92,13 +127,24 @@ RSpec.describe FlashcardGenerationService do
 
     context 'when flashcard validation fails' do
       it 'raises error for blank question' do
+        source_text = <<~TEXT
+          Ruby on Rails is a web application framework written in Ruby.
+          It follows the Model-View-Controller (MVC) architectural pattern.
+          Rails emphasizes convention over configuration and the DRY principle.
+        TEXT
+
         mock_response = {
           'flashcards' => [
             { 'question' => '', 'answer' => 'Some answer' }
           ]
         }
 
-        allow_any_instance_of(OpenRouterService).to receive(:complete).and_return(mock_response)
+        # Mock OpenRouterService initialization to avoid API key requirement
+        mock_openrouter = instance_double(OpenRouterService)
+        allow(OpenRouterService).to receive(:new).and_return(mock_openrouter)
+        allow(mock_openrouter).to receive(:complete).and_return(mock_response)
+
+        service = described_class.new
 
         expect {
           service.generate(source_text)
@@ -106,13 +152,24 @@ RSpec.describe FlashcardGenerationService do
       end
 
       it 'raises error for blank answer' do
+        source_text = <<~TEXT
+          Ruby on Rails is a web application framework written in Ruby.
+          It follows the Model-View-Controller (MVC) architectural pattern.
+          Rails emphasizes convention over configuration and the DRY principle.
+        TEXT
+
         mock_response = {
           'flashcards' => [
             { 'question' => 'What is Rails?', 'answer' => '' }
           ]
         }
 
-        allow_any_instance_of(OpenRouterService).to receive(:complete).and_return(mock_response)
+        # Mock OpenRouterService initialization to avoid API key requirement
+        mock_openrouter = instance_double(OpenRouterService)
+        allow(OpenRouterService).to receive(:new).and_return(mock_openrouter)
+        allow(mock_openrouter).to receive(:complete).and_return(mock_response)
+
+        service = described_class.new
 
         expect {
           service.generate(source_text)
@@ -120,13 +177,24 @@ RSpec.describe FlashcardGenerationService do
       end
 
       it 'raises error for question too long' do
+        source_text = <<~TEXT
+          Ruby on Rails is a web application framework written in Ruby.
+          It follows the Model-View-Controller (MVC) architectural pattern.
+          Rails emphasizes convention over configuration and the DRY principle.
+        TEXT
+
         mock_response = {
           'flashcards' => [
             { 'question' => 'a' * 201, 'answer' => 'Answer' }
           ]
         }
 
-        allow_any_instance_of(OpenRouterService).to receive(:complete).and_return(mock_response)
+        # Mock OpenRouterService initialization to avoid API key requirement
+        mock_openrouter = instance_double(OpenRouterService)
+        allow(OpenRouterService).to receive(:new).and_return(mock_openrouter)
+        allow(mock_openrouter).to receive(:complete).and_return(mock_response)
+
+        service = described_class.new
 
         expect {
           service.generate(source_text)
@@ -134,13 +202,24 @@ RSpec.describe FlashcardGenerationService do
       end
 
       it 'raises error for answer too long' do
+        source_text = <<~TEXT
+          Ruby on Rails is a web application framework written in Ruby.
+          It follows the Model-View-Controller (MVC) architectural pattern.
+          Rails emphasizes convention over configuration and the DRY principle.
+        TEXT
+
         mock_response = {
           'flashcards' => [
             { 'question' => 'Question?', 'answer' => 'a' * 501 }
           ]
         }
 
-        allow_any_instance_of(OpenRouterService).to receive(:complete).and_return(mock_response)
+        # Mock OpenRouterService initialization to avoid API key requirement
+        mock_openrouter = instance_double(OpenRouterService)
+        allow(OpenRouterService).to receive(:new).and_return(mock_openrouter)
+        allow(mock_openrouter).to receive(:complete).and_return(mock_response)
+
+        service = described_class.new
 
         expect {
           service.generate(source_text)
@@ -150,8 +229,19 @@ RSpec.describe FlashcardGenerationService do
 
     context 'when OpenRouter API fails' do
       it 'propagates OpenRouterService errors' do
-        allow_any_instance_of(OpenRouterService).to receive(:complete)
+        source_text = <<~TEXT
+          Ruby on Rails is a web application framework written in Ruby.
+          It follows the Model-View-Controller (MVC) architectural pattern.
+          Rails emphasizes convention over configuration and the DRY principle.
+        TEXT
+
+        # Mock OpenRouterService initialization to avoid API key requirement
+        mock_openrouter = instance_double(OpenRouterService)
+        allow(OpenRouterService).to receive(:new).and_return(mock_openrouter)
+        allow(mock_openrouter).to receive(:complete)
           .and_raise(OpenRouterService::RateLimitError, 'Rate limit exceeded')
+
+        service = described_class.new
 
         expect {
           service.generate(source_text)

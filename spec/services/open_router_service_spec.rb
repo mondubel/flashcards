@@ -1,12 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe OpenRouterService do
-  let(:api_key) { 'sk-or-v1-test-key-1234567890' }
-  let(:model) { 'openai/gpt-4o-mini' }
-
   describe '#initialize' do
     context 'when API key is provided' do
       it 'initializes successfully with api_key parameter' do
+        api_key = 'sk-or-v1-test-key-1234567890'
+        model = 'openai/gpt-4o-mini'
+
         service = described_class.new(model: model, api_key: api_key)
 
         expect(service.model).to eq(model)
@@ -16,37 +16,39 @@ RSpec.describe OpenRouterService do
     end
 
     context 'when API key is in environment' do
-      before do
-        allow(ENV).to receive(:[]).with('OPENROUTER_API_KEY').and_return(api_key)
-      end
-
       it 'uses API key from environment variable' do
+        api_key = 'sk-or-v1-test-key-1234567890'
+        model = 'openai/gpt-4o-mini'
+
+        allow(ENV).to receive(:[]).with('OPENROUTER_API_KEY').and_return(api_key)
+
         service = described_class.new(model: model)
         expect(service.send(:api_key)).to eq(api_key)
       end
     end
 
     context 'when API key is in Rails credentials' do
-      before do
+      it 'uses API key from credentials' do
+        api_key = 'sk-or-v1-test-key-1234567890'
+        model = 'openai/gpt-4o-mini'
+
         allow(ENV).to receive(:[]).with('OPENROUTER_API_KEY').and_return(nil)
         allow(Rails.application.credentials).to receive(:dig)
           .with(:openrouter, :api_key).and_return(api_key)
-      end
 
-      it 'uses API key from credentials' do
         service = described_class.new(model: model)
         expect(service.send(:api_key)).to eq(api_key)
       end
     end
 
     context 'when API key is missing' do
-      before do
+      it 'raises ConfigurationError' do
+        model = 'openai/gpt-4o-mini'
+
         allow(ENV).to receive(:[]).with('OPENROUTER_API_KEY').and_return(nil)
         allow(Rails.application.credentials).to receive(:dig)
           .with(:openrouter, :api_key).and_return(nil)
-      end
 
-      it 'raises ConfigurationError' do
         expect {
           described_class.new(model: model)
         }.to raise_error(
@@ -58,6 +60,8 @@ RSpec.describe OpenRouterService do
 
     context 'when model is blank' do
       it 'raises ConfigurationError' do
+        api_key = 'sk-or-v1-test-key-1234567890'
+
         expect {
           described_class.new(model: '', api_key: api_key)
         }.to raise_error(
@@ -69,6 +73,9 @@ RSpec.describe OpenRouterService do
 
     context 'with custom parameters' do
       it 'accepts custom temperature' do
+        api_key = 'sk-or-v1-test-key-1234567890'
+        model = 'openai/gpt-4o-mini'
+
         service = described_class.new(
           model: model,
           api_key: api_key,
@@ -79,6 +86,9 @@ RSpec.describe OpenRouterService do
       end
 
       it 'accepts custom max_tokens' do
+        api_key = 'sk-or-v1-test-key-1234567890'
+        model = 'openai/gpt-4o-mini'
+
         service = described_class.new(
           model: model,
           api_key: api_key,
@@ -89,6 +99,9 @@ RSpec.describe OpenRouterService do
       end
 
       it 'accepts skip_ssl_verify parameter' do
+        api_key = 'sk-or-v1-test-key-1234567890'
+        model = 'openai/gpt-4o-mini'
+
         service = described_class.new(
           model: model,
           api_key: api_key,
@@ -101,12 +114,13 @@ RSpec.describe OpenRouterService do
   end
 
   describe '#complete' do
-    let(:service) { described_class.new(model: model, api_key: api_key, skip_ssl_verify: true) }
-    let(:system_message) { 'You are a helpful assistant.' }
-    let(:user_message) { 'Hello, world!' }
-
     context 'when request is successful' do
-      before do
+      it 'returns parsed response' do
+        api_key = 'sk-or-v1-test-key-1234567890'
+        model = 'openai/gpt-4o-mini'
+        system_message = 'You are a helpful assistant.'
+        user_message = 'Hello, world!'
+
         stub_request(:post, 'https://openrouter.ai/api/v1/chat/completions')
           .with(
             body: hash_including(
@@ -130,9 +144,8 @@ RSpec.describe OpenRouterService do
             }.to_json,
             headers: { 'Content-Type' => 'application/json' }
           )
-      end
 
-      it 'returns parsed response' do
+        service = described_class.new(model: model, api_key: api_key, skip_ssl_verify: true)
         response = service.complete(
           system_message: system_message,
           user_message: user_message
@@ -143,8 +156,12 @@ RSpec.describe OpenRouterService do
     end
 
     context 'when using structured output' do
-      let(:response_format) do
-        {
+      it 'returns structured response' do
+        api_key = 'sk-or-v1-test-key-1234567890'
+        model = 'openai/gpt-4o-mini'
+        system_message = 'You are a helpful assistant.'
+        user_message = 'Hello, world!'
+        response_format = {
           type: 'json_schema',
           json_schema: {
             name: 'test_schema',
@@ -159,9 +176,7 @@ RSpec.describe OpenRouterService do
             }
           }
         }
-      end
 
-      before do
         stub_request(:post, 'https://openrouter.ai/api/v1/chat/completions')
           .to_return(
             status: 200,
@@ -172,9 +187,8 @@ RSpec.describe OpenRouterService do
             }.to_json,
             headers: { 'Content-Type' => 'application/json' }
           )
-      end
 
-      it 'returns structured response' do
+        service = described_class.new(model: model, api_key: api_key, skip_ssl_verify: true)
         response = service.complete(
           system_message: system_message,
           user_message: user_message,
@@ -186,16 +200,21 @@ RSpec.describe OpenRouterService do
     end
 
     context 'when API returns authentication error' do
-      before do
+      it 'raises AuthenticationError' do
+        api_key = 'sk-or-v1-test-key-1234567890'
+        model = 'openai/gpt-4o-mini'
+        system_message = 'You are a helpful assistant.'
+        user_message = 'Hello, world!'
+
         stub_request(:post, 'https://openrouter.ai/api/v1/chat/completions')
           .to_return(
             status: 401,
             body: { error: { message: 'Invalid API key' } }.to_json,
             headers: { 'Content-Type' => 'application/json' }
           )
-      end
 
-      it 'raises AuthenticationError' do
+        service = described_class.new(model: model, api_key: api_key, skip_ssl_verify: true)
+
         expect {
           service.complete(system_message: system_message, user_message: user_message)
         }.to raise_error(
@@ -206,16 +225,21 @@ RSpec.describe OpenRouterService do
     end
 
     context 'when API returns rate limit error' do
-      before do
+      it 'raises RateLimitError' do
+        api_key = 'sk-or-v1-test-key-1234567890'
+        model = 'openai/gpt-4o-mini'
+        system_message = 'You are a helpful assistant.'
+        user_message = 'Hello, world!'
+
         stub_request(:post, 'https://openrouter.ai/api/v1/chat/completions')
           .to_return(
             status: 429,
             body: { error: { message: 'Rate limit exceeded' } }.to_json,
             headers: { 'Content-Type' => 'application/json' }
           )
-      end
 
-      it 'raises RateLimitError' do
+        service = described_class.new(model: model, api_key: api_key, skip_ssl_verify: true)
+
         expect {
           service.complete(system_message: system_message, user_message: user_message)
         }.to raise_error(OpenRouterService::RateLimitError, /Rate limit exceeded/)
@@ -223,16 +247,21 @@ RSpec.describe OpenRouterService do
     end
 
     context 'when API returns insufficient credits error' do
-      before do
+      it 'raises InsufficientCreditsError' do
+        api_key = 'sk-or-v1-test-key-1234567890'
+        model = 'openai/gpt-4o-mini'
+        system_message = 'You are a helpful assistant.'
+        user_message = 'Hello, world!'
+
         stub_request(:post, 'https://openrouter.ai/api/v1/chat/completions')
           .to_return(
             status: 402,
             body: { error: { message: 'Insufficient credits' } }.to_json,
             headers: { 'Content-Type' => 'application/json' }
           )
-      end
 
-      it 'raises InsufficientCreditsError' do
+        service = described_class.new(model: model, api_key: api_key, skip_ssl_verify: true)
+
         expect {
           service.complete(system_message: system_message, user_message: user_message)
         }.to raise_error(
@@ -243,16 +272,21 @@ RSpec.describe OpenRouterService do
     end
 
     context 'when API returns bad request error' do
-      before do
+      it 'raises InvalidRequestError' do
+        api_key = 'sk-or-v1-test-key-1234567890'
+        model = 'openai/gpt-4o-mini'
+        system_message = 'You are a helpful assistant.'
+        user_message = 'Hello, world!'
+
         stub_request(:post, 'https://openrouter.ai/api/v1/chat/completions')
           .to_return(
             status: 400,
             body: { error: { message: 'Invalid request' } }.to_json,
             headers: { 'Content-Type' => 'application/json' }
           )
-      end
 
-      it 'raises InvalidRequestError' do
+        service = described_class.new(model: model, api_key: api_key, skip_ssl_verify: true)
+
         expect {
           service.complete(system_message: system_message, user_message: user_message)
         }.to raise_error(OpenRouterService::InvalidRequestError, /Invalid request/)
@@ -260,16 +294,21 @@ RSpec.describe OpenRouterService do
     end
 
     context 'when API returns server error' do
-      before do
+      it 'raises ServerError' do
+        api_key = 'sk-or-v1-test-key-1234567890'
+        model = 'openai/gpt-4o-mini'
+        system_message = 'You are a helpful assistant.'
+        user_message = 'Hello, world!'
+
         stub_request(:post, 'https://openrouter.ai/api/v1/chat/completions')
           .to_return(
             status: 500,
             body: { error: { message: 'Internal server error' } }.to_json,
             headers: { 'Content-Type' => 'application/json' }
           )
-      end
 
-      it 'raises ServerError' do
+        service = described_class.new(model: model, api_key: api_key, skip_ssl_verify: true)
+
         expect {
           service.complete(system_message: system_message, user_message: user_message)
         }.to raise_error(OpenRouterService::ServerError, /server error/)
@@ -277,7 +316,12 @@ RSpec.describe OpenRouterService do
     end
 
     context 'when response contains error in body (HTTP 200)' do
-      before do
+      it 'raises APIError' do
+        api_key = 'sk-or-v1-test-key-1234567890'
+        model = 'openai/gpt-4o-mini'
+        system_message = 'You are a helpful assistant.'
+        user_message = 'Hello, world!'
+
         stub_request(:post, 'https://openrouter.ai/api/v1/chat/completions')
           .to_return(
             status: 200,
@@ -289,9 +333,9 @@ RSpec.describe OpenRouterService do
             }.to_json,
             headers: { 'Content-Type' => 'application/json' }
           )
-      end
 
-      it 'raises APIError' do
+        service = described_class.new(model: model, api_key: api_key, skip_ssl_verify: true)
+
         expect {
           service.complete(system_message: system_message, user_message: user_message)
         }.to raise_error(OpenRouterService::APIError, /Provider returned error/)
@@ -299,12 +343,17 @@ RSpec.describe OpenRouterService do
     end
 
     context 'when network timeout occurs' do
-      before do
+      it 'raises NetworkError' do
+        api_key = 'sk-or-v1-test-key-1234567890'
+        model = 'openai/gpt-4o-mini'
+        system_message = 'You are a helpful assistant.'
+        user_message = 'Hello, world!'
+
         stub_request(:post, 'https://openrouter.ai/api/v1/chat/completions')
           .to_timeout
-      end
 
-      it 'raises NetworkError' do
+        service = described_class.new(model: model, api_key: api_key, skip_ssl_verify: true)
+
         expect {
           service.complete(system_message: system_message, user_message: user_message)
         }.to raise_error(OpenRouterService::NetworkError, /timeout/)
@@ -312,16 +361,21 @@ RSpec.describe OpenRouterService do
     end
 
     context 'when response is invalid JSON' do
-      before do
+      it 'raises ResponseParseError' do
+        api_key = 'sk-or-v1-test-key-1234567890'
+        model = 'openai/gpt-4o-mini'
+        system_message = 'You are a helpful assistant.'
+        user_message = 'Hello, world!'
+
         stub_request(:post, 'https://openrouter.ai/api/v1/chat/completions')
           .to_return(
             status: 200,
             body: 'invalid json',
             headers: { 'Content-Type' => 'application/json' }
           )
-      end
 
-      it 'raises ResponseParseError' do
+        service = described_class.new(model: model, api_key: api_key, skip_ssl_verify: true)
+
         expect {
           service.complete(system_message: system_message, user_message: user_message)
         }.to raise_error(OpenRouterService::ResponseParseError)
@@ -329,16 +383,21 @@ RSpec.describe OpenRouterService do
     end
 
     context 'when response is missing content' do
-      before do
+      it 'raises ResponseParseError' do
+        api_key = 'sk-or-v1-test-key-1234567890'
+        model = 'openai/gpt-4o-mini'
+        system_message = 'You are a helpful assistant.'
+        user_message = 'Hello, world!'
+
         stub_request(:post, 'https://openrouter.ai/api/v1/chat/completions')
           .to_return(
             status: 200,
             body: { choices: [] }.to_json,
             headers: { 'Content-Type' => 'application/json' }
           )
-      end
 
-      it 'raises ResponseParseError' do
+        service = described_class.new(model: model, api_key: api_key, skip_ssl_verify: true)
+
         expect {
           service.complete(system_message: system_message, user_message: user_message)
         }.to raise_error(OpenRouterService::ResponseParseError, /No content/)
