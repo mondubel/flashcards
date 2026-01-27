@@ -2,7 +2,22 @@ class FlashcardsController < ApplicationController
     before_action :authenticate_user!
 
     def index
-        @flashcards = current_user.flashcards
+        @flashcards = current_user.flashcards.order(created_at: :desc).paginate(page: params[:page], per_page: 12)
+
+        # User-specific stats
+        @user_stats = {
+            ai_acceptance_rate: current_user.ai_acceptance_rate,
+            ai_flashcards_percentage: current_user.ai_flashcards_percentage,
+            total_flashcards: current_user.flashcards.count
+        }
+
+        # System-wide stats
+        @system_stats = {
+            ai_acceptance_rate: User.system_ai_acceptance_rate,
+            ai_flashcards_percentage: User.system_ai_flashcards_percentage,
+            total_flashcards: User.system_total_flashcards,
+            total_users: User.system_total_users
+        }
     end
 
     def show
@@ -32,7 +47,18 @@ class FlashcardsController < ApplicationController
     def update
         @flashcard = current_user.flashcards.find(params[:id])
 
-        if @flashcard.update(flashcard_params)
+        # Check if flashcard content changed and it was AI-generated
+        content_changed = (@flashcard.front != flashcard_params[:front] ||
+                          @flashcard.back != flashcard_params[:back])
+
+        # Change source to ai_edited if it was ai_full and content changed
+        if content_changed && @flashcard.ai_full?
+            updated_params = flashcard_params.merge(source: :ai_edited)
+        else
+            updated_params = flashcard_params
+        end
+
+        if @flashcard.update(updated_params)
             redirect_to flashcards_path, notice: "Flashcard updated successfully."
         else
             flash.now[:alert] = "Failed to update flashcard. Please check the errors below."

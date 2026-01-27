@@ -19,6 +19,8 @@ gem "image_processing", "~> 1.2"
 gem "tailwindcss-rails"
 gem "tailwindcss-ruby"
 gem "devise"
+gem "httparty", "~> 0.21"
+gem "will_paginate", "~> 4.0"
 
 group :development, :test do
   gem "rubocop", require: false
@@ -31,6 +33,7 @@ group :development, :test do
   gem "factory_bot_rails"
   gem "faker"
   gem "rails-controller-testing"
+  gem "dotenv-rails"
 end
 
 group :development do
@@ -43,4 +46,5 @@ group :test do
   gem "selenium-webdriver"
   gem "simplecov", require: false
   gem "simplecov-json", require: false
+  gem "webmock"
 end

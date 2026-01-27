@@ -1,0 +1,159 @@
+<div class="max-w-7xl mx-auto px-4" data-controller="flashcard-review">
+  <!-- Header -->
+  <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-6">
+    <div class="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-8">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-white mb-2">Review Generated Flashcards</h1>
+          <p class="text-indigo-100">
+            Select the flashcards you want to save. You can edit them before saving.
+          </p>
+        </div>
+        <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-white text-indigo-700 shadow-sm">
+          <%= pluralize(@flashcards_data.count, 'flashcard') %> generated
+        </span>
+      </div>
+    </div>
+
+    <!-- Source Text Section -->
+    <div class="px-6 py-6 bg-gray-50 border-b border-gray-200">
+      <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Source Text</h2>
+      <div class="bg-white rounded-lg p-4 border border-gray-200">
+        <p class="text-sm text-gray-700 whitespace-pre-wrap font-mono leading-relaxed line-clamp-6"><%= @generation.source_text %></p>
+      </div>
+    </div>
+  </div>
+
+  <form action="<%= save_flashcards_generation_path(@generation) %>" method="post" accept-charset="UTF-8">
+    <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+
+    <!-- Batch Actions Toolbar -->
+    <div class="bg-white rounded-xl shadow-md p-4 mb-6 sticky top-4 z-10 border border-gray-200">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <button type="button"
+                  data-action="click->flashcard-review#selectAll"
+                  class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Select All
+          </button>
+          <button type="button"
+                  data-action="click->flashcard-review#deselectAll"
+                  class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Deselect All
+          </button>
+          <span class="text-sm text-gray-600">
+            <span data-flashcard-review-target="count" class="font-semibold text-indigo-600">0</span> selected
+          </span>
+        </div>
+        <div class="flex items-center gap-3">
+          <%= link_to "Cancel", generations_path,
+              class: "inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition" %>
+          <button type="button"
+                  onclick="document.getElementById('save-all-form').submit()"
+                  class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition shadow-sm">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            Save All (<%= @flashcards_data.count %>)
+          </button>
+          <button type="submit"
+                  class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition shadow-sm">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            Save Selected
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Flashcards Grid -->
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-2 mb-6">
+      <% @flashcards_data.each_with_index do |card_data, index| %>
+        <%
+          front = card_data[:front] || card_data["front"]
+          back = card_data[:back] || card_data["back"]
+        %>
+        <div class="flashcard-item bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 border-2 border-transparent"
+             data-flashcard-review-target="item">
+          <div class="p-6">
+            <!-- Checkbox Header -->
+            <div class="flex items-center justify-between mb-4">
+              <label class="flex items-center cursor-pointer group">
+                <%= check_box_tag "flashcards[#{index}][selected]", "1", true,
+                    class: "w-5 h-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 focus:ring-offset-0 cursor-pointer",
+                    data: { flashcard_review_target: "checkbox", action: "change->flashcard-review#toggleSelection" },
+                    id: "flashcard_#{index}_selected" %>
+                <span class="ml-2 text-sm font-medium text-gray-700 group-hover:text-indigo-600 transition">
+                  Flashcard #<%= index + 1 %>
+                </span>
+              </label>
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                AI Generated
+              </span>
+            </div>
+
+            <!-- Front (Question) -->
+            <div class="mb-4">
+              <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                Question
+              </label>
+              <%= text_area_tag "flashcards[#{index}][front]", front,
+                  rows: 3,
+                  class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm text-gray-900 bg-white placeholder-gray-400 resize-none",
+                  placeholder: "Front of the flashcard" %>
+            </div>
+
+            <!-- Back (Answer) -->
+            <div>
+              <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                Answer
+              </label>
+              <%= text_area_tag "flashcards[#{index}][back]", back,
+                  rows: 4,
+                  class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm text-gray-900 bg-white placeholder-gray-400 resize-none",
+                  placeholder: "Back of the flashcard" %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Bottom Actions -->
+    <div class="bg-white rounded-xl shadow-md p-4 mb-6 border border-gray-200">
+      <div class="flex items-center justify-end gap-3">
+        <%= link_to "Cancel", generations_path,
+            class: "inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition" %>
+        <button type="button"
+                onclick="document.getElementById('save-all-form').submit()"
+                class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition shadow-sm">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          Save All (<%= @flashcards_data.count %>)
+        </button>
+        <button type="submit"
+                class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition shadow-sm">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          Save Selected
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Hidden form for Save All action -->
+  <form id="save-all-form" action="<%= save_all_flashcards_generation_path(@generation) %>" method="post" style="display: none;">
+    <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+  </form>
+</div>

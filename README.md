@@ -50,27 +50,36 @@ CI/CD and Hosting:
 
 Clone the repository:
 
-```
+```bash
 git clone https://github.com/your-org/Flashcards.git
 cd Flashcards
 ```
 
 Install dependencies:
 
-```
+```bash
 bundle install
+```
+
+Configure OpenRouter API (required for AI flashcard generation):
+
+```bash
+# Set environment variable for development
+export OPENROUTER_API_KEY='sk-or-v1-your-key-here'
+
+# Get your API key from: https://openrouter.ai
 ```
 
 Set up the database:
 
-```
-bin/rails db:create db:migrate
+```bash
+bin/rails db:create db:migrate db:seed
 ```
 
 Start the development server:
 
-```
-bin/rails server
+```bash
+bin/dev
 ```
 
 The application will be available at http://localhost:3000.
@@ -79,11 +88,12 @@ The application will be available at http://localhost:3000.
 
 Common Rails commands used in this project:
 
-```
-bin/rails server        # Start the development server
+```bash
+bin/dev                # Start development server (recommended)
+bin/rails server       # Start Rails server only
 bin/rails console      # Open Rails console
 bin/rails db:migrate   # Run database migrations
-bin/rails test         # Run test suite
+bundle exec rspec      # Run test suite
 ```
 
 Linting and security tools (development/test):
@@ -121,6 +131,24 @@ Out of scope for MVP:
 ## Project Status
 
 The project is currently in the MVP stage and under active development.
+
+## Services Architecture
+
+### OpenRouterService
+
+Low-level API client for OpenRouter.ai communication:
+- Handles HTTP requests and authentication
+- Manages structured JSON responses
+- Comprehensive error handling
+- SSL configuration for development
+
+### FlashcardGenerationService
+
+High-level service for AI flashcard generation:
+- Intelligent prompt engineering
+- Response validation and formatting
+- Quality control (length, content)
+- Multiple model support
 
 ## License
 

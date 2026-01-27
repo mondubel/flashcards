@@ -1,4 +1,6 @@
 <div class="max-w-7xl mx-auto px-4">
+  <%= render partial: 'shared/stats_header', locals: { user_stats: @user_stats, system_stats: @system_stats } %>
+
   <% if @flashcards.empty? %>
     <div class="p-12 text-center">
       <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -87,6 +89,16 @@
           <% end %>
         </div>
       <% end %>
+    </div>
+
+    <!-- Pagination -->
+    <div class="mt-8 flex justify-center">
+      <%= will_paginate @flashcards,
+          class: "inline-flex items-center gap-2",
+          previous_label: "← Previous",
+          next_label: "Next →",
+          inner_window: 2,
+          outer_window: 1 %>
     </div>
   <% end %>
 </div>

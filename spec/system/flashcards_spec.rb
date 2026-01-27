@@ -434,7 +434,7 @@ RSpec.describe "Flashcard Workflows", type: :system do
       expect(flashcard.front).to eq('Original question')
     end
 
-    it "preserves source type when updating flashcard" do
+    it "changes source to ai_edited when updating AI-generated flashcard" do
       user = create(:user, email: 'user@example.com', password: 'password123')
       flashcard = create(:flashcard, :ai_full, user: user, front: 'AI question', back: 'AI answer')
 
@@ -450,7 +450,7 @@ RSpec.describe "Flashcard Workflows", type: :system do
 
       flashcard.reload
       expect(flashcard.front).to eq('Edited AI question')
-      expect(flashcard.source).to eq('ai_full')
+      expect(flashcard.source).to eq('ai_edited')
     end
 
     it "displays success message after updating flashcard" do
