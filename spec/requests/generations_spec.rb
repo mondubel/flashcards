@@ -27,14 +27,16 @@ RSpec.describe "Generations", type: :request do
     it "does not display other users' generations" do
       user = create(:user)
       valid_source_text = 'A' * 1500
+      user_generation = create(:generation, user: user, source_text: 'User generation text: ' + valid_source_text)
       sign_in user
 
       other_user = create(:user)
-      other_generation = create(:generation, user: other_user, source_text: valid_source_text)
+      other_generation = create(:generation, user: other_user, source_text: 'Other generation text: ' + valid_source_text)
 
       get generations_path
 
-      expect(response.body).not_to include(other_generation.id.to_s)
+      expect(response.body).to include('User generation text:')
+      expect(response.body).not_to include('Other generation text:')
     end
   end
 
