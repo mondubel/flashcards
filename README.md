@@ -119,9 +119,9 @@ Included in MVP:
 - Manual flashcard creation (front/back)
 - AI-generated flashcards from pasted text
 - Preview, edit, save, and delete flashcards
-- Spaced repetition reviews based on Anki
 
 Out of scope for MVP:
+- Spaced repetition reviews based on Anki
 - Custom spaced repetition algorithm
 - File imports (PDF, DOCX, etc.)
 - Sharing flashcards between users
