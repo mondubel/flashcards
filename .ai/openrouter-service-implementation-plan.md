@@ -502,7 +502,7 @@ bundle install
 
 ```bash
 # .env (development)
-OPENROUTER_API_KEY=sk-or-v1-your-key-here
+OPENROUTER_API_KEY=sk-or-v1-xxxxxxxxxxxxx
 
 # .env.example (commituj do repo)
 OPENROUTER_API_KEY=

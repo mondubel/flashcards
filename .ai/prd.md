@@ -61,7 +61,7 @@ Poza zakresem MVP:
 - Onboarding użytkownika.
 - Rozbudowana analityka i raportowanie.
 
-## 5. Historyjki użytkowników
+## 5. User stories
 
 US-001
 Tytuł: Rejestracja nowego użytkownika

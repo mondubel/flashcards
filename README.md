@@ -65,7 +65,7 @@ Configure OpenRouter API (required for AI flashcard generation):
 
 ```bash
 # Set environment variable for development
-export OPENROUTER_API_KEY='sk-or-v1-your-key-here'
+export OPENROUTER_API_KEY='sk-or-v1-xxxxxxxxxxxxx'
 
 # Get your API key from: https://openrouter.ai
 ```
