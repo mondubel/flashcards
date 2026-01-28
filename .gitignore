@@ -48,3 +48,4 @@
 
 # Ignore Kamal deployment configuration
 /.kamal
+.DS_Store
